@@ -24,7 +24,9 @@ public class JobProcessingServiceImpl implements JobProcessingService {
 
         StringBuilder cmdOutput = new StringBuilder();
         for(String task : resolved){
-            cmdOutput.append(taskGraph.get(task).getCommand() + "\n");
+            if(taskGraph.get(task).getCommand() != null) {
+                cmdOutput.append(taskGraph.get(task).getCommand() + "\n");
+            }
         }
 
         return cmdOutput.toString();
