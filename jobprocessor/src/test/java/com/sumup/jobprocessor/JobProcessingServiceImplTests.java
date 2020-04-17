@@ -72,7 +72,52 @@ public class JobProcessingServiceImplTests {
         task3.setRequires(Arrays.asList("task-1"));
         jobs.add(task3);
 
-        jobProcessingService.processJobs(jobs);
+        String result = jobProcessingService.processJobs(jobs);
+    }
+
+        @Test
+        public void convolutedDependency() {
+        String expectedOutput = "A\nB\nD\nC\nE\nF\n";
+        List<Task> jobs = new ArrayList<>();
+
+        Task A = new Task();
+        A.setName("A");
+        A.setCommand("A");
+        jobs.add(A);
+
+        Task B = new Task();
+        B.setName("B");
+        B.setCommand("B");
+        B.setRequires(Arrays.asList("A"));
+        jobs.add(B);
+
+        Task C = new Task();
+        C.setName("C");
+        C.setCommand("C");
+        C.setRequires(Arrays.asList("D", "A"));
+        jobs.add(C);
+
+        Task D = new Task();
+        D.setName("D");
+        D.setCommand("D");
+        D.setRequires(Arrays.asList("B"));
+        jobs.add(D);
+
+        Task E = new Task();
+        E.setName("E");
+        E.setCommand("E");
+        E.setRequires(Arrays.asList("C", "A"));
+        jobs.add(E);
+
+        Task F = new Task();
+        F.setName("F");
+        F.setCommand("F");
+        F.setRequires(Arrays.asList("E", "B"));
+        jobs.add(F);
+
+        String result = jobProcessingService.processJobs(jobs);
+
+        assertEquals(expectedOutput, result);
     }
 
     @Test
@@ -81,7 +126,7 @@ public class JobProcessingServiceImplTests {
         String expectedOutput = "touch /tmp/file1\n" +
                                 "echo 'Hello World!' > /tmp/file1\n" +
                                 "cat /tmp/file1\n" +
-                                "rm /tmp/file1";
+                                "rm /tmp/file1\n";
 
         List<Task> jobs = new ArrayList<>();
 
