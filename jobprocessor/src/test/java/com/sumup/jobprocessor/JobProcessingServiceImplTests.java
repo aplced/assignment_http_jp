@@ -5,20 +5,19 @@ import com.sumup.jobprocessor.exceptions.TaskDependencyUnsatisfiedException;
 import com.sumup.jobprocessor.models.Task;
 import com.sumup.jobprocessor.service.JobProcessingService;
 import com.sumup.jobprocessor.service.JobProcessingServiceImpl;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 public class JobProcessingServiceImplTests {
     @TestConfiguration
     static class JobProcessingServiceImplTestsContextConfiguration {
@@ -32,7 +31,7 @@ public class JobProcessingServiceImplTests {
     @Autowired
     private JobProcessingService jobProcessingService;
 
-    @Test(expected = TaskDependencyUnsatisfiedException.class)
+    @Test
     public void unsatisfiedDependencyTaskThrowsException() {
         List<Task> jobs = new ArrayList<>();
 
@@ -47,10 +46,10 @@ public class JobProcessingServiceImplTests {
         task2.setRequires(Arrays.asList("task-3"));
         jobs.add(task2);
 
-        jobProcessingService.processJobs(jobs);
+        Assertions.assertThrows(TaskDependencyUnsatisfiedException.class, () -> jobProcessingService.processJobs(jobs));
     }
 
-    @Test(expected = TaskDependencyCircularException.class)
+    @Test
     public void circularDependencyTaskListThrowsException() {
         List<Task> jobs = new ArrayList<>();
 
@@ -72,7 +71,7 @@ public class JobProcessingServiceImplTests {
         task3.setRequires(Arrays.asList("task-1"));
         jobs.add(task3);
 
-        String result = jobProcessingService.processJobs(jobs);
+        Assertions.assertThrows(TaskDependencyCircularException.class, () -> jobProcessingService.processJobs(jobs));
     }
 
         @Test
@@ -117,7 +116,7 @@ public class JobProcessingServiceImplTests {
 
         String result = jobProcessingService.processJobs(jobs);
 
-        assertEquals(expectedOutput, result);
+        Assertions.assertEquals(expectedOutput, result);
     }
 
     @Test
@@ -155,6 +154,6 @@ public class JobProcessingServiceImplTests {
 
         String result = jobProcessingService.processJobs(jobs);
 
-        assertEquals(expectedOutput, result);
+        Assertions.assertEquals(expectedOutput, result);
     }
 }

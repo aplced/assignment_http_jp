@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class JobProcessingServiceImpl implements JobProcessingService {
@@ -32,7 +33,10 @@ public class JobProcessingServiceImpl implements JobProcessingService {
     private void resolveRequired(String taskName, Map<String, Task> taskGraph, Set<String> resolved, Set<String> visited) {
         visited.add(taskName);
         if(taskGraph.containsKey(taskName)) {
-            taskGraph.get(taskName).getRequires().forEach(requiredTask -> {
+            Optional.ofNullable(taskGraph.get(taskName).getRequires())
+                    .map(Collection::stream)
+                    .orElseGet(Stream::empty)
+                    .forEach(requiredTask -> {
                 if (!resolved.contains(requiredTask)) {
                     if (visited.contains(requiredTask)) {
                         throw new TaskDependencyCircularException(taskName, taskGraph.get(taskName).getRequires());
