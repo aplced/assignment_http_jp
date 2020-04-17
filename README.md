@@ -1,14 +1,13 @@
 # HTTP Job Processor assignment
 Contrived HTTP job processing service
 Based on Spring Boot and following standard package structure:
-####controllers 
+#### controllers 
 the endpoint, exception formatting and request parsing
-####exceptions 
+#### exceptions 
 custom exceptions for badly formatted input
-####models 
+#### models 
 just the task descriptor
-####service 
+#### service 
 the actual logic resolving the dependency graph.
-
-####test
+#### test
 JobProcessingServiceImplTests is providing unit tests for the graph traversal and detection of circular dependencies. 
